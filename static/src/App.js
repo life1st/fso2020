@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
+import { fetchAll, AddPerson } from './request'
 const App = () => {
   const [ persons, setPersons ] = useState([])
   const [ newName, setNewName ] = useState('')
@@ -7,9 +7,9 @@ const App = () => {
   const [ searchingName, setSearchingName ] = useState('')
 
   useEffect(() => {
-    axios.get('http://localhost:8000/db.json')
+    fetchAll()
     .then(res => {
-      const { persons } = res.data
+      const persons = res.data
       setPersons(persons)
     })
   }, [])
@@ -30,12 +30,15 @@ const App = () => {
       alert(`${newName} is already added to phonebook`)
       return
     }
+    const info = {name: newName, number: newNumber}
     setPersons([
       ...persons,
-      {name: newName, number: newNumber}
+      info
     ])
-    setNewName('')
-    setNewNumber('')
+    AddPerson(info).then(() => {
+      setNewName('')
+      setNewNumber('')
+    })
   }
 
   const showPersons = persons.filter(({name}) => {

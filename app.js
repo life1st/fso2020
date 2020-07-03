@@ -7,6 +7,7 @@ const { api } = require('./api')
 const { phonebook } = require('./model')
 
 app.use(morgan())
+app.use(express.static('./static/build'))
 app.use(cors())
 app.use(bodyParser.json())
 app.use('/api', api)
