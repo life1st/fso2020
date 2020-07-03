@@ -1,1 +1,1 @@
-web: node ./part3/phonebook_server/index.js
+web: node index.js
