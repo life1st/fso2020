@@ -19,7 +19,13 @@ export const fetchPersonById = (id) => {
 export const deletePersonById = (id) => {
   const url = baseUrl + `/api/persons/${id}`
 
-  return axios.get(url)
+  return axios.delete(url)
+}
+
+export const editPersonPhoneNumber = (id, info) => {
+  const url = baseUrl + `/api/persons/${id}`
+
+  return axios.put(url, info)
 }
 
 export const AddPerson = ({name, number}) => {

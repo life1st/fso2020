@@ -1,44 +1,59 @@
+const mongoose = require('mongoose')
+const uniqueValidator = require('mongoose-unique-validator')
+const { connect, disconnect } = require('./db')
+
+const openValidateOnUpdateConfig = {
+  runValidators: true
+}
 class Phonebook {
   constructor() {
-    this.persons = [
-      { 
-        "name": "Arto Hellas", 
-        "number": "040-123456",
-        "id": 1
+    connect()
+    const personSchema = new mongoose.Schema({
+      name: {
+        type: String,
+        unique: true,
+        minlength: 3
       },
-      { 
-        "name": "Ada Lovelace", 
-        "number": "39-44-5323523",
-        "id": 2
+      number: {
+        type: String || Number,
+        minlength: 8
       },
-      { 
-        "name": "Dan Abramov", 
-        "number": "12-43-234345",
-        "id": 3
-      },
-      { 
-        "name": "Mary Poppendieck", 
-        "number": "39-23-6423122",
-        "id": 4
+      id: Number
+    })
+    personSchema.plugin(uniqueValidator)
+    personSchema.set('toJSON', {
+      transform: (doc, returnedObject) => {
+        returnedObject.id = returnedObject._id.toString()
+        delete returnedObject._id
+        delete returnedObject.__v
       }
-    ]
+    })
+    this.People = mongoose.model('person', personSchema)
   }
 
-  count() {
-    return this.persons.length
+  async count() {
+    let people = await this.People.find({})
+    return people.length
   }
-  deleteOneById(id) {
-    this.persons = this.persons.filter(p => p.id !== id)
+  async getPeople() {
+    return await this.People.find({})
   }
-  addPerson(info) {
+  async getPerson(id) {
+    return await this.People.findById(id)
+  }
+  async addPerson(info) {
     if (!(info['name'] && info['number'])) {
       return false
     }
     const id = Math.floor(Math.random() * 10000000)
-    this.persons.push({
-      ...info, id
-    })
-    return true
+    return await new this.People({...info, id}).save()
+  }
+  async updatePhoneNumberById(id, info) {
+    const { number } = info
+    return await this.People.findByIdAndUpdate(id, {number}, {new: true, ...openValidateOnUpdateConfig})
+  }
+  async deleteOneById(id) {
+    return await this.People.findByIdAndDelete(id)
   }
 }
 

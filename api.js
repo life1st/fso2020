@@ -2,45 +2,49 @@ const express = require('express')
 const { phonebook } = require('./model')
 
 const api = express.Router()
-.get('/persons', (req, res) => {
-  const { persons } = phonebook
-  res.json(persons)
+.get('/persons', (req, resp) => {
+  phonebook.getPeople()
+  .then(p => resp.json(p))
 })
-.post('/persons', (req, res) => {
-  const info = req.body
-  console.log(req.body)
-  if (phonebook.addPerson(info)) {
-    res.json(phonebook.persons)
-  } else {
-    res.status(400).json({
-      err: 'wrong person info.'
-    })
-  }
+.post('/persons', (req, resp, next) => {
+  phonebook.addPerson(req.body)
+  .then(p => resp.json(p))
+  .catch(next)
 })
-.get('/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
+.get('/persons/:id', (req, resp, next) => {
+  const { id } = req.params
 
-  if (!id) {
-    return res.status(404).end()
-  }
-
-  const { persons } = phonebook
-  let p = persons.find(p => p.id === id)
-  if (!p) {
-    return res.status(404).end()
-  }
-  
-  return res.json(p)
+  phonebook.getPerson(id)
+  .then(p => {
+    if (!p) {
+      return resp.status(404).end()
+    }
+    return resp.json(p)
+  })
+  .catch(next)
 })
-.delete('/persons/:id', (req, res) => {
-  const id = Number(req.params.id)
-
-  if (!id) {
-    return res.status(404).end()
-  }
+.delete('/persons/:id', (req, resp, next) => {
+  const { id } = req.params
 
   phonebook.deleteOneById(id)
-  return res.status(204).end()
+  .then(res => {
+    if (!res) {
+      return resp.status(404).end()
+    }
+    return resp.status(204).end()
+  }).catch(next)
+})
+.put('/persons/:id', (req, resp, next) => {
+  const { id } = req.params
+  const info = req.body
+  phonebook.updatePhoneNumberById(id, info)
+  .then(p => {
+    if (!p) {
+      return resp.status(404).end()
+    }
+    return resp.json(p)
+  })
+  .catch(next)
 })
 
 module.exports = { api }

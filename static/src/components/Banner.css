@@ -1,0 +1,13 @@
+.banner {
+  background: #ccc;
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+.banner.normal {
+  color: green;
+  border: 1px solid green;
+}
+.banner.error {
+  color: red;
+  border: 1px solid red;
+}
