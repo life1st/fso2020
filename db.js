@@ -1,3 +1,5 @@
+/*eslint-env node*/
+
 const mongoose = require('mongoose')
 let url = (pwd) => `mongodb+srv://jiaoyang:${pwd}@cluster0-kyrqp.mongodb.net/phonebook?retryWrites=true`
 let url_local = 'mongodb://localhost:27017/phonebook'
@@ -14,7 +16,7 @@ const connect = () => {
   mongoose.set('useFindAndModify', false)
   mongoose.set('useNewUrlParser', true);
   mongoose.set('useCreateIndex', true);
-  return mongoose.connect(url(pwd), {useNewUrlParser: true, useUnifiedTopology: true})
+  return mongoose.connect(url(pwd), { useNewUrlParser: true, useUnifiedTopology: true })
 }
 const disconnect = () => {
   return mongoose.connection.close()

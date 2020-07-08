@@ -1,13 +1,11 @@
 const mongoose = require('mongoose')
 const uniqueValidator = require('mongoose-unique-validator')
-const { connect, disconnect } = require('./db')
 
 const openValidateOnUpdateConfig = {
   runValidators: true
 }
 class Phonebook {
   constructor() {
-    connect()
     const personSchema = new mongoose.Schema({
       name: {
         type: String,
@@ -18,7 +16,6 @@ class Phonebook {
         type: String || Number,
         minlength: 8
       },
-      id: Number
     })
     personSchema.plugin(uniqueValidator)
     personSchema.set('toJSON', {
@@ -46,11 +43,11 @@ class Phonebook {
       return false
     }
     const id = Math.floor(Math.random() * 10000000)
-    return await new this.People({...info, id}).save()
+    return await new this.People({ ...info, id }).save()
   }
   async updatePhoneNumberById(id, info) {
     const { number } = info
-    return await this.People.findByIdAndUpdate(id, {number}, {new: true, ...openValidateOnUpdateConfig})
+    return await this.People.findByIdAndUpdate(id, { number }, { new: true, ...openValidateOnUpdateConfig })
   }
   async deleteOneById(id) {
     return await this.People.findByIdAndDelete(id)
