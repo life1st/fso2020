@@ -1,0 +1,17 @@
+.noti {
+  border-radius: 4px;
+  background-color: #ccc;
+  color: #333;
+  font-size: 16px;
+}
+.noti.normal {
+  border: 1px solid green;
+  color: green;
+}
+.noti.error {
+  border: 1px solid red;
+  color: red;
+}
+.noti.hide {
+  opacity: 0;
+}
